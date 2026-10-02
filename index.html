@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+     content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<meta name="theme-color" content="#F58C6B">
+
+<link rel="manifest" href="manifest.json">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Money Tracker">
+
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<title>Money Tracker</title>
+<style>
+* {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+}
+:root {
+   --terracotta: #F58C6B;
+   --peach: #FFB38A;
+   --cream: #FFF7E8;
+   --yellow: #FFD56A;
+   --sage: #91B89A;
+   --pink: #F5A6B8;
+   --purple: #B79AD8;
+   --dark: #473C38;
+   --muted: #84756F;
+   --white: #FFFFFF;
+}
+/* ---------- BODY / BOHO BACKGROUND ---------- */
+body {
+   font-family: -apple-system, BlinkMacSystemFont,
+                "Segoe UI", Roboto, Arial, sans-serif;
+   color: var(--dark);
+   min-height: 100vh;
+   padding-bottom: 100px;
+   background-image:
+       linear-gradient(
+           rgba(255, 247, 232, 0.70),
+           rgba(255, 247, 232, 0.70)
+       ),
+       url("boho-background.jpg");
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
+   background-attachment: fixed;
+}
+
+/* ---------- HEADER ---------- */
+.header {
+   background:
+       linear-gradient(
+           135deg,
+           var(--terracotta),
+           var(--peach)
+       );
+   color: white;
+   padding:
+       calc(35px + env(safe-area-inset-top))
+       22px
+       30px;
+   border-radius: 0 0 32px 32px;
+   box-shadow: 0 8px 30px rgba(142,83,62,.18);
+}
+.header h1 {
+   font-size: 21px;
+   margin-bottom: 18px;
+}
+.total-label {
+   opacity: .85;
+   font-size: 14px;
+}
+.total {
+   font-size: 40px;
+   font-weight: 800;
+   margin-top: 3px;
+}
+
+/* ---------- CONTENT ---------- */
+.container {
+   max-width: 650px;
+   margin: auto;
+   padding: 20px;
+}
+.page {
+   display: none;
+}
+.page.active {
+   display: block;
+}
+.page-title {
+   font-size: 24px;
+   font-weight: 800;
+   margin: 8px 0 18px;
+}
+
+/* ---------- CARDS ---------- */
+.card {
+   background: rgba(255,255,255,.91);
+   padding: 18px;
+   border-radius: 20px;
+   margin-bottom: 14px;
+   box-shadow:
+       0 5px 20px rgba(90,65,50,.08);
+   border: 1px solid rgba(255,255,255,.7);
+}
+.card-top {
+   display: flex;
+   justify-content: space-between;
+   gap: 15px;
+}
+.name {
+   font-size: 17px;
+   font-weight: 800;
+}
+.amount {
+   font-size: 19px;
+   font-weight: 800;
+   color: var(--terracotta);
+}
+.type {
+   color: var(--muted);
+   font-size: 13px;
+   margin-top: 4px;
+}
+.original {
+   font-size: 12px;
+   color: var(--muted);
+   margin-top: 4px;
+}
+.due {
+   margin-top: 5px;
+   color: #D96767;
+   font-size: 13px;
+}
+.paid {
+   color: #55956A;
+   font-weight: 700;
+   margin-top: 5px;
+}
+
+/* ---------- BUTTONS ---------- */
+.card-buttons {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 8px;
+   margin-top: 15px;
+}
+button {
+   border: 0;
+   cursor: pointer;
+   font-family: inherit;
+}
+.small-button {
+   background: #FFF0DF;
+   color: var(--dark);
+   padding: 9px 12px;
+   border-radius: 10px;
+   font-weight: 600;
+}
+.pay-button {
+   background: var(--sage);
+   color: white;
+}
+
+/* ---------- ENTRY HISTORY ---------- */
+.entry-history {
+   display: none;
+   background: #FFF9F0;
+   margin-top: 15px;
+   padding: 13px;
+   border-radius: 13px;
+}
+.entry-history.open {
+   display: block;
+}
+.entry-history-title {
+   font-size: 13px;
+   font-weight: 800;
+   margin-bottom: 10px;
+}
+.timeline-item {
+   position: relative;
+   border-left: 3px solid var(--peach);
+   padding:
+       0
+       0
+       14px
+       15px;
+   font-size: 13px;
+}
+.timeline-item:last-child {
+   padding-bottom: 0;
+}
+.timeline-item::before {
+   content: "";
+   position: absolute;
+   left: -7px;
+   top: 2px;
+   width: 11px;
+   height: 11px;
+   border-radius: 50%;
+   background: var(--terracotta);
+}
+.timeline-time {
+   font-size: 11px;
+   color: var(--muted);
+   margin-top: 3px;
+}
+
+/* ---------- HISTORY PAGE ---------- */
+.history-card {
+   background: white;
+   padding: 15px;
+   border-radius: 17px;
+   margin-bottom: 10px;
+   box-shadow:
+       0 4px 15px rgba(90,65,50,.07);
+}
+.history-payment {
+   border-left: 6px solid var(--sage);
+}
+.history-created {
+   border-left: 6px solid var(--yellow);
+}
+.history-bill {
+   border-left: 6px solid var(--purple);
+}
+.history-title {
+   font-weight: 700;
+}
+.history-date {
+   color: var(--muted);
+   font-size: 12px;
+   margin-top: 4px;
+}
+
+/* ---------- EMPTY ---------- */
+.empty {
+   text-align: center;
+   color: var(--muted);
+   padding: 35px 10px;
+}
+
+/* ---------- ADD BUTTON ---------- */
+.add-button {
+   position: fixed;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   line-height: 1;
+   padding-bottom: 3px;
+   right: 22px;
+   bottom: 95px;
+   width: 59px;
+   height: 59px;
+   border-radius: 50%;
+   background: var(--terracotta);
+   color: white;
+   font-size: 30px;
+   box-shadow:
+       0 7px 20px rgba(159,81,58,.30);
+   z-index: 50;
+}
+
+/* ---------- BOTTOM NAVIGATION ---------- */
+.bottom-nav {
+   position: fixed;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   height:
+       calc(72px + env(safe-area-inset-bottom));
+   padding-bottom:
+       env(safe-area-inset-bottom);
+   background: rgba(255,255,255,.96);
+   display: flex;
+   box-shadow:
+       0 -5px 25px rgba(70,50,40,.10);
+   z-index: 40;
+}
+.nav-button {
+   flex: 1;
+   background: transparent;
+   color: var(--muted);
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   gap: 3px;
+   font-size: 12px;
+}
+.nav-icon {
+   font-size: 22px;
+}
+.nav-button.active {
+   color: var(--terracotta);
+   font-weight: 700;
+}
+
+/* ---------- MODAL ---------- */
+.modal {
+   display: none;
+   position: fixed;
+   inset: 0;
+   background: rgba(57,42,36,.48);
+   padding: 20px;
+   z-index: 100;
+   overflow-y: auto;
+}
+.modal-content {
+   background: var(--cream);
+   max-width: 500px;
+   margin: 55px auto;
+   padding: 23px;
+   border-radius: 25px;
+   box-shadow:
+       0 15px 40px rgba(50,35,30,.25);
+}
+.modal h2 {
+   margin-bottom: 18px;
+}
+label {
+   display: block;
+   font-size: 13px;
+   margin: 13px 0 5px;
+   color: var(--muted);
+}
+input,
+select {
+   width: 100%;
+   padding: 13px;
+   border: 1px solid #E5D6C7;
+   border-radius: 11px;
+   background: white;
+   font-size: 16px;
+}
+.save-button {
+   width: 100%;
+   background: var(--terracotta);
+   color: white;
+   padding: 14px;
+   border-radius: 12px;
+   margin-top: 20px;
+   font-weight: 700;
+}
+.cancel-button {
+   width: 100%;
+   background: transparent;
+   padding: 13px;
+   color: var(--muted);
+}
+
+/* Desktop/tablet */
+@media (min-width: 700px) {
+   .header {
+       max-width: 650px;
+       margin: auto;
+   }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+<h1>✰ Money Tracker ✰</h1>
+<div class="total-label">
+       Total outstanding
+</div>
+<div
+       class="total"
+       id="totalOutstanding">
+       €0.00
+</div>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+
+<!-- DEBTS PAGE -->
+<section
+       id="debtsPage"
+       class="page active">
+<div class="page-title">
+           People & Stores
+</div>
+<div id="debtsList"></div>
+</section>
+
+<!-- BILLS PAGE -->
+<section
+       id="billsPage"
+       class="page">
+<div class="page-title">
+           Bills
+</div>
+<div id="billsList"></div>
+</section>
+
+<!-- HISTORY PAGE -->
+<section
+       id="historyPage"
+       class="page">
+<div class="page-title">
+           History
+</div>
+<div id="historyList"></div>
+</section>
+
+</div>
+
+<!-- FLOATING ADD BUTTON -->
+<button
+   class="add-button"
+   onclick="openModal()">
+   +
+</button>
+
+<!-- PERMANENT NAVIGATION -->
+<nav class="bottom-nav">
+<button
+       class="nav-button active"
+       data-page="debtsPage"
+       onclick="showPage('debtsPage', this)">
+<span class="nav-icon">💸</span>
+       Debts
+</button>
+
+<button
+       class="nav-button"
+       data-page="billsPage"
+       onclick="showPage('billsPage', this)">
+<span class="nav-icon">🧾</span>
+       Bills
+</button>
+
+<button
+       class="nav-button"
+       data-page="historyPage"
+       onclick="showPage('historyPage', this)">
+<span class="nav-icon">⏱︎</span>
+       History
+</button>
+</nav>
+
+<!-- ADD MODAL -->
+<div
+   class="modal"
+   id="modal">
+<div class="modal-content">
+<h2>Add something</h2>
+
+<label>
+           What is it?
+</label>
+<select
+           id="itemType"
+           onchange="changeType()">
+<option value="person">
+               Person
+</option>
+<option value="store">
+               Store
+</option>
+<option value="bill">
+               Bill
+</option>
+</select>
+
+<label id="nameLabel">Name</label>
+<input
+           id="itemName"
+           type="text"
+           placeholder="example: Stephanie, Andreas Mpakalis">
+
+<label>Amount (€)</label>
+<input
+           id="itemAmount"
+           type="number"
+           min="0"
+           step="0.01"
+           placeholder="0.00">
+
+<div
+           id="dueDateArea"
+           style="display:none">
+<label>Due date</label>
+<input
+               id="dueDate"
+               type="date">
+</div>
+
+<button
+           class="save-button"
+           onclick="saveItem()">
+           Save
+</button>
+
+<button
+           class="cancel-button"
+           onclick="closeModal()">
+           Cancel
+</button>
+</div>
+</div>
+
+<script>
+/*
+--------------------------------------------------
+DATA
+--------------------------------------------------
+*/
+let debts =
+   JSON.parse(
+       localStorage.getItem("debts_v2")
+   ) || [];
+
+let bills =
+   JSON.parse(
+       localStorage.getItem("bills_v2")
+   ) || [];
+
+let history =
+   JSON.parse(
+       localStorage.getItem("history_v2")
+   ) || [];
+
+/*
+--------------------------------------------------
+SAVE
+--------------------------------------------------
+*/
+function saveData() {
+   localStorage.setItem(
+       "debts_v2",
+       JSON.stringify(debts)
+   );
+   localStorage.setItem(
+       "bills_v2",
+       JSON.stringify(bills)
+   );
+   localStorage.setItem(
+       "history_v2",
+       JSON.stringify(history)
+   );
+}
+
+/*
+--------------------------------------------------
+UNIQUE ID
+--------------------------------------------------
+*/
+function createID() {
+   return (
+       Date.now().toString(36) +
+       Math.random().toString(36).substring(2)
+   );
+}
+
+/*
+--------------------------------------------------
+NAVIGATION
+--------------------------------------------------
+*/
+function showPage(pageID, button) {
+   document
+       .querySelectorAll(".page")
+       .forEach(page => {
+           page.classList.remove("active");
+       });
+
+   document
+       .getElementById(pageID)
+       .classList.add("active");
+
+   document
+       .querySelectorAll(".nav-button")
+       .forEach(btn => {
+           btn.classList.remove("active");
+       });
+
+   button.classList.add("active");
+
+   if (pageID === "historyPage") {
+       renderHistory();
+   }
+}
+
+/*
+--------------------------------------------------
+RENDER EVERYTHING
+--------------------------------------------------
+*/
+function render() {
+   renderDebts();
+   renderBills();
+   renderHistory();
+   calculateTotal();
+}
+
+/*
+--------------------------------------------------
+DEBTS
+--------------------------------------------------
+*/
+function renderDebts() {
+   const container =
+       document.getElementById("debtsList");
+
+   container.innerHTML = "";
+
+   if (debts.length === 0) {
+       container.innerHTML = `
+<div class="empty">
+               Nothing here yet 🌿
+<br><br>
+               Tap + to add a person or store.
+</div>
+       `;
+       return;
+   }
+
+   debts.forEach((debt, index) => {
+       const card =
+           document.createElement("div");
+
+       card.className = "card";
+
+       const debtHistory =
+           debt.history || [];
+
+       let timelineHTML = "";
+
+       debtHistory.forEach(event => {
+           timelineHTML += `
+<div class="timeline-item">
+<strong>
+                       ${escapeHTML(event.description)}
+</strong>
+<div class="timeline-time">
+                       ${formatDateTime(event.timestamp)}
+</div>
+</div>
+           `;
+       });
+
+       card.innerHTML = `
+<div class="card-top">
+<div>
+<div class="name">
+                       ${
+                           debt.type === "person"
+                           ? "👤"
+                           : "🏪"
+                       }
+                       ${escapeHTML(debt.name)}
+</div>
+
+<div class="type">
+                       ${
+                           debt.type === "person"
+                           ? "Person"
+                           : "Store"
+                       }
+</div>
+
+<div class="original">
+                       Originally:
+                       €${debt.originalAmount.toFixed(2)}
+</div>
+</div>
+
+<div class="amount">
+                   €${debt.amount.toFixed(2)}
+</div>
+</div>
+
+<div class="card-buttons">
+<button
+                   class="small-button pay-button"
+                   onclick="makePayment(${index})">
+                   + Payment
+</button>
+
+<button
+                   class="small-button"
+                   onclick="toggleHistory('${debt.id}')">
+                   History
+</button>
+
+<button
+                   class="small-button"
+                   onclick="deleteDebt(${index})">
+                   Delete
+</button>
+</div>
+
+<div
+               class="entry-history"
+               id="history-${debt.id}">
+<div class="entry-history-title">
+                   Activity
+</div>
+               ${timelineHTML}
+</div>
+       `;
+
+       container.appendChild(card);
+   });
+}
+
+/*
+--------------------------------------------------
+TOGGLE INDIVIDUAL HISTORY
+--------------------------------------------------
+*/
+function toggleHistory(id) {
+   const historyElement =
+       document.getElementById(
+           "history-" + id
+       );
+
+   historyElement.classList.toggle("open");
+}
+
+/*
+--------------------------------------------------
+BILLS
+--------------------------------------------------
+*/
+function renderBills() {
+   const container =
+       document.getElementById("billsList");
+
+   container.innerHTML = "";
+
+   if (bills.length === 0) {
+       container.innerHTML = `
+<div class="empty">
+               No bills added yet 🌸
+</div>
+       `;
+       return;
+   }
+
+   bills.forEach((bill, index) => {
+       const card =
+           document.createElement("div");
+
+       card.className = "card";
+
+       card.innerHTML = `
+<div class="card-top">
+<div>
+<div class="name">
+                       🧾
+                       ${escapeHTML(bill.name)}
+</div>
+
+                   ${
+                       bill.paid
+                       ? `
+<div class="paid">
+                           Paid ✓
+</div>
+                       `
+                       : `
+<div class="due">
+                           Due
+                           ${formatSimpleDate(
+                               bill.dueDate
+                           )}
+</div>
+                       `
+                   }
+</div>
+
+<div class="amount">
+                   €${bill.amount.toFixed(2)}
+</div>
+</div>
+
+<div class="card-buttons">
+               ${
+                   !bill.paid
+                   ? `
+<button
+                       class="small-button pay-button"
+                       onclick="markBillPaid(${index})">
+                       Mark paid
+</button>
+                   `
+                   : ""
+               }
+
+<button
+                   class="small-button"
+                   onclick="deleteBill(${index})">
+                   Delete
+</button>
+</div>
+       `;
+
+       container.appendChild(card);
+   });
+}
+
+/*
+--------------------------------------------------
+GLOBAL HISTORY
+--------------------------------------------------
+*/
+function renderHistory() {
+   const container =
+       document.getElementById("historyList");
+
+   container.innerHTML = "";
+
+   if (history.length === 0) {
+       container.innerHTML = `
+<div class="empty">
+               Your activity will appear here 🌼
+</div>
+       `;
+       return;
+   }
+
+   const sortedHistory =
+       [...history].sort(
+           (a, b) =>
+               b.timestamp - a.timestamp
+       );
+
+   sortedHistory.forEach(event => {
+       const card =
+           document.createElement("div");
+
+       let historyClass =
+           "history-created";
+
+       if (event.action === "payment") {
+           historyClass =
+               "history-payment";
+       }
+
+       if (event.action === "bill") {
+           historyClass =
+               "history-bill";
+       }
+
+       card.className =
+           "history-card " +
+           historyClass;
+
+       card.innerHTML = `
+<div class="history-title">
+               ${escapeHTML(event.description)}
+</div>
+
+<div class="history-date">
+               ${formatDateTime(event.timestamp)}
+</div>
+       `;
+
+       container.appendChild(card);
+   });
+}
+
+/*
+--------------------------------------------------
+TOTAL
+--------------------------------------------------
+*/
+function calculateTotal() {
+   let total = 0;
+
+   debts.forEach(debt => {
+       total += debt.amount;
+   });
+
+   bills.forEach(bill => {
+       if (!bill.paid) {
+           total += bill.amount;
+       }
+   });
+
+   document
+       .getElementById("totalOutstanding")
+       .textContent =
+       "€" + total.toFixed(2);
+}
+
+/*
+--------------------------------------------------
+ADD MODAL
+--------------------------------------------------
+*/
+function openModal() {
+   document
+       .getElementById("modal")
+       .style.display = "block";
+}
+
+function closeModal() {
+   document
+       .getElementById("modal")
+       .style.display = "none";
+   clearForm();
+}
+
+function changeType() {
+   const type = document
+           .getElementById("itemType")
+           .value;
+
+   const nameInput = document
+	   .getElementById("itemName");
+
+   const nameLabel = document
+	   .getElementById("nameLabel");
+
+   document
+       .getElementById("dueDateArea")
+       .style.display =
+       type === "bill"
+       ? "block"
+       : "none";
+
+   if (type === "bill") {
+
+	nameLabel.textContent = "What is it?";
+
+	nameInput.placeholder = "example: Electricity, Water, Internet";
+   }
+
+   else {
+
+	nameLabel.textContent = "Who do you owe?";
+
+	nameInput.placeholder = "example: Stephanie, Andreas Mpakalis"
+ }
+
+}
+
+/*
+--------------------------------------------------
+SAVE NEW ENTRY
+--------------------------------------------------
+*/
+function saveItem() {
+   const type =
+       document
+           .getElementById("itemType")
+           .value;
+
+   const name =
+       document
+           .getElementById("itemName")
+           .value
+           .trim();
+
+   const amount =
+       parseFloat(
+           document
+               .getElementById("itemAmount")
+               .value
+       );
+
+   const dueDate =
+       document
+           .getElementById("dueDate")
+           .value;
+
+   if (!name) {
+       alert(
+           "Please enter a name."
+       );
+       return;
+   }
+
+   if (
+       isNaN(amount) ||
+       amount <= 0
+   ) {
+       alert(
+           "Please enter a valid amount."
+       );
+       return;
+   }
+
+   const now =
+       Date.now();
+
+   /*
+   BILL
+   */
+   if (type === "bill") {
+       const bill = {
+           id: createID(),
+           name: name,
+           amount: amount,
+           dueDate: dueDate,
+           paid: false,
+           createdAt: now
+       };
+
+       bills.push(bill);
+
+       history.push({
+           id: createID(),
+           action: "bill",
+           description:
+               `Added bill "${name}" — €${amount.toFixed(2)}`,
+           timestamp: now
+       });
+   }
+
+   /*
+   PERSON / STORE
+   */
+   else {
+       const debt = {
+           id: createID(),
+           name: name,
+           type: type,
+           originalAmount: amount,
+           amount: amount,
+           createdAt: now,
+           history: [
+               {
+                   type: "created",
+                   amount: amount,
+                   description:
+                       `Debt created — €${amount.toFixed(2)}`,
+                   timestamp: now
+               }
+           ]
+       };
+
+       debts.push(debt);
+
+       history.push({
+           id: createID(),
+           action: "created",
+           description:
+               `Added ${name} — €${amount.toFixed(2)} owed`,
+           timestamp: now
+       });
+   }
+
+   saveData();
+   closeModal();
+   render();
+}
+
+/*
+--------------------------------------------------
+PARTIAL PAYMENT
+--------------------------------------------------
+*/
+function makePayment(index) {
+   const debt =
+       debts[index];
+
+   const input =
+       prompt(
+           `Amount paid to ${debt.name}\n\n` +
+           `Currently owed: €${debt.amount.toFixed(2)}`
+       );
+
+   if (input === null) {
+       return;
+   }
+
+   const payment =
+       parseFloat(input);
+
+   if (
+       isNaN(payment) ||
+       payment <= 0
+   ) {
+       alert(
+           "Please enter a valid amount."
+       );
+       return;
+   }
+
+   if (
+       payment >
+       debt.amount
+   ) {
+       alert(
+           "Payment cannot be larger than the remaining debt."
+       );
+       return;
+   }
+
+   const now =
+       Date.now();
+
+   debt.amount -= payment;
+
+   /*
+   Avoid floating point problems
+   */
+   debt.amount =
+       Math.round(
+           debt.amount * 100
+       ) / 100;
+
+   debt.history.push({
+       type: "payment",
+       amount: payment,
+       description:
+           `Paid €${payment.toFixed(2)} — €${debt.amount.toFixed(2)} remaining`,
+       timestamp: now
+   });
+
+   history.push({
+       id: createID(),
+       action: "payment",
+       description:
+           `Paid ${debt.name} €${payment.toFixed(2)} — €${debt.amount.toFixed(2)} remaining`,
+       timestamp: now
+   });
+
+   /*
+   IMPORTANT:
+   We DON'T delete a fully paid debt.
+   Keeping it allows its history
+   to remain available.
+   */
+   saveData();
+   render();
+}
+
+/*
+--------------------------------------------------
+PAY BILL
+--------------------------------------------------
+*/
+function markBillPaid(index) {
+   const bill =
+       bills[index];
+
+   bill.paid = true;
+   bill.paidAt =
+       Date.now();
+
+   history.push({
+       id: createID(),
+       action: "payment",
+       description:
+           `Paid ${bill.name} bill — €${bill.amount.toFixed(2)}`,
+       timestamp:
+           bill.paidAt
+   });
+
+   saveData();
+   render();
+}
+
+/*
+--------------------------------------------------
+DELETE
+--------------------------------------------------
+*/
+function deleteDebt(index) {
+   if (
+       confirm(
+           "Delete this debt?\n\n" +
+           "Its global history will remain."
+       )
+   ) {
+       debts.splice(
+           index,
+           1
+       );
+       saveData();
+       render();
+   }
+}
+
+function deleteBill(index) {
+   if (
+       confirm(
+           "Delete this bill?\n\n" +
+           "Its history will remain."
+       )
+   ) {
+       bills.splice(
+           index,
+           1
+       );
+       saveData();
+       render();
+   }
+}
+
+/*
+--------------------------------------------------
+FORM
+--------------------------------------------------
+*/
+function clearForm() {
+   document
+       .getElementById("itemName")
+       .value = "";
+
+   document
+       .getElementById("itemAmount")
+       .value = "";
+
+   document
+       .getElementById("dueDate")
+       .value = "";
+}
+
+/*
+--------------------------------------------------
+DATES
+--------------------------------------------------
+*/
+function formatDateTime(timestamp) {
+   return new Date(timestamp)
+       .toLocaleString(
+           "en-GB",
+           {
+               day: "2-digit",
+               month: "short",
+               year: "numeric",
+               hour: "2-digit",
+               minute: "2-digit",
+               second: "2-digit"
+           }
+       );
+}
+
+function formatSimpleDate(date) {
+   if (!date) {
+       return "No date";
+   }
+
+   return new Date(
+       date + "T00:00:00"
+   )
+   .toLocaleDateString(
+       "en-GB",
+       {
+           day: "numeric",
+           month: "short",
+           year: "numeric"
+       }
+   );
+}
+
+/*
+--------------------------------------------------
+SECURITY
+--------------------------------------------------
+*/
+function escapeHTML(text) {
+   const div =
+       document.createElement("div");
+   div.textContent = text;
+   return div.innerHTML;
+}
+
+/*
+--------------------------------------------------
+START
+--------------------------------------------------
+*/
+render();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+   window.addEventListener("load", () => {
+       navigator.serviceWorker
+           .register("./sw.js")
+           .then(() => {
+               console.log("Service Worker registered");
+           })
+           .catch(error => {
+               console.error(
+                   "Service Worker registration failed:",
+                   error
+               );
+           });
+   });
+}
+</script>
+
+</body>
+</html>
